@@ -1,0 +1,2 @@
+import fs from 'node:fs';import path from 'node:path';
+let count=0;function walk(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const f=path.join(dir,e.name);if(e.isDirectory())walk(f);else if(f.endsWith('.html')){count++;const s=fs.readFileSync(f,'utf8');for(const [,url]of s.matchAll(/(?:src|href)="(\/[^"?#]*)"/g)){const target=path.join('dist',url);if(!fs.existsSync(target))throw Error(`${f}: missing ${url}`)}if(!s.includes('<h1>'))throw Error(`Missing heading: ${f}`)}}}walk('dist');console.log(`Checked local links and assets across ${count} pages.`);
